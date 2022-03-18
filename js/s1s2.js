@@ -56,6 +56,14 @@ $(document).ready(function () {
     main();
 });
 
+function getUrlVars() {
+    var vars = {};
+    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+        vars[key] = value;
+    });
+    return vars;
+}
+
 function main()
 {
     // retrieve the dashboard configuration from Bugzilla
@@ -96,7 +104,16 @@ function retrieveConfiguration(url)
     
                 var teams = Object.keys(S1S2.teams);
                 if(teams.length > 0) {
-                    SELECTED_TEAM ="Graphics";  // hard code Graphics for now
+                    SELECTED_TEAM ="Graphics";  // default to Graphics team
+
+                    var url_vars = getUrlVars();
+                    if(url_vars.length != 0 && url_vars.hasOwnProperty("team")) {
+                        SELECTED_TEAM = url_vars["team"];
+                        if(!S1S2.teams.hasOwnProperty(SELECTED_TEAM)) {
+                            SELECTED_TEAM ="Graphics";  // default to Graphics team
+                        }
+                    }
+
                     $("#subtitle").replaceWith("<div id=\"subtitle\" class=\"subtitle\">Team: " + SELECTED_TEAM + "</div>");
     
                     var team_data = S1S2.teams[SELECTED_TEAM];
